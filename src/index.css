@@ -4,6 +4,14 @@
   themes: light --default;
  
   default: true;
-  --color-primary: blue;
+  --color-primary: #632EE3;
   --color-secondary: teal;
 }
+
+
+  .btn-primary{
+    @apply bg-gradient-to-r from-[#632EE3] TO-[#9F62F2] border-none text-white
+  }
+  .btn-primary:hover{
+    @apply opacity-90;
+  }

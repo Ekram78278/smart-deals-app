@@ -1,6 +1,19 @@
+import { use } from "react";
 import { Link } from "react-router";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Navbar = () => {
+  const { user, signOutUser } = use(AuthContext);
+
+  const handleSignOut = () => {
+      signOutUser()
+      .then(() => {
+        console.log('signout successful')
+      }).catch ((error) => {
+        console.log(error)
+      })
+  }
+
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="navbar-start">
@@ -27,29 +40,51 @@ const Navbar = () => {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <Link to='/' >Home</Link>
+              <Link to="/">Home</Link>
             </li>
 
             <li>
-              <Link to='/allProducts'>All Products</Link>
+              <Link to="/allProducts">All Products</Link>
             </li>
+            
+            {user && (
+              <>
+                <li>
+                  <Link to="/register">My Products</Link>
+                </li>
+                <li>
+                  <Link to="/register">My Bids</Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <a className="btn btn-ghost text-xl">Smart-Deals</a>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <Link to='/'>Home</Link>
+            <Link to="/">Home</Link>
           </li>
 
           <li>
-            <Link to='/allProducts' >All Products</Link>
+            <Link to="/allProducts">All Products</Link>
           </li>
+          
+          {user && (
+            <>
+              <li>
+                <Link to="/myProducts">My Products</Link>
+              </li>
+              <li>
+                <Link to="/myBids">My Bids</Link>
+              </li>
+            </>
+          )}
         </ul>
       </div>
       <div className="navbar-end">
-        <a className="btn">Button</a>
+        {user ? <Link to='/' onClick={handleSignOut} className="btn btn-primary">Sign Out</Link> : <Link to='/register' className="btn btn-primary">Login</Link>}
       </div>
     </div>
   );
