@@ -1,38 +1,38 @@
-import { use } from "react";
-import { AuthContext } from "../contexts/AuthContext";
 import { result } from "lodash";
+import { use } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Register = () => {
-  
-  const {signInWithGoogle} = use(AuthContext);
+  const { signInWithGoogle } = use(AuthContext);
   const handleGoogleSignIn = () => {
-        signInWithGoogle()
-        .then(res => {
-            console.log(res);
-            // create user in the database
+    signInWithGoogle()
+      .then((res) => {
+        console.log(res);
+        // create user in the database
 
-            const newUser = {
-                name: result.user.displayName,
-                email: result.user.email,
-                image: result.user.photoURL
-            }
-            fetch('http://localhost:3000/users', {
-                method:'POST',
-                headers:{
-                    'content-type': 'application/json'
-                },
-                body:JSON.stringify(newUser)
-            })
-            .then(result => result.json())
-            .then(data => {
-                console.log('data after user save', data)
-            })
-        }).catch (error => {
-            console.log(error)
+        const newUser = {
+          name: result.user.displayName,
+          email: result.user.email,
+          image: result.user.photoURL,
+        };
+        fetch("http://localhost:3000/users", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(newUser),
         })
-  }
-  
-    return (
+          .then((result) => result.json())
+          .then((data) => {
+            console.log("data after user save", data);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  return (
     <div className="card bg-base-100 w-full mx-auto max-w-sm shrink-0 shadow-2xl">
       <div className="card-body">
         <fieldset className="fieldset">
@@ -44,7 +44,10 @@ const Register = () => {
             <a className="link link-hover">Forgot password?</a>
           </div>
           <button className="btn btn-neutral mt-4">Register Now </button>
-          <button onClick={handleGoogleSignIn} className="btn bg-white text-black border-[#e5e5e5]">
+          <button
+            onClick={handleGoogleSignIn}
+            className="btn bg-white text-black border-[#e5e5e5]"
+          >
             <svg
               aria-label="Google logo"
               width="16"

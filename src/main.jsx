@@ -6,11 +6,12 @@ import Home from "./components/Home/Home.jsx";
 import RootLayout from "./components/Layout/RootLayout.jsx";
 import MyBids from "./components/MyBids/MyBids.jsx";
 import MyProducts from "./components/MyProducts/MyProducts.jsx";
-import Register from "./components/Register.jsx";
+import Register from "./components/Register/Register.jsx";
 import AllProducts from "./components/allProducts/AllProducts.jsx";
 import AuthProvider from "./contexts/AuthProvider.jsx";
 
 import "./index.css";
+import ProductDetails from "./components/ProductDetails/ProductDetails.jsx";
 
 const router = createBrowserRouter([
   {
@@ -35,8 +36,13 @@ const router = createBrowserRouter([
       },
       {
         path: "/myBids",
-        element:<MyBids></MyBids>,
+        element: <MyBids></MyBids>,
       },
+      {
+        path:'/productDetails/:id',
+        loader:({params}) => fetch(`http://localhost:3000/products/${params.id}`),
+        element:<ProductDetails></ProductDetails>
+      }
     ],
   },
 ]);
