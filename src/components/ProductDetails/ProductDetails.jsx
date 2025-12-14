@@ -1,21 +1,24 @@
-import { use, useEffect, useRef } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { useLoaderData } from "react-router";
-import { AuthContext } from "../../contexts/AuthContext";
 import Swal from "sweetalert2";
-
-
-useEffect(()=>{
-    fetch(``)
-    .then
-},[productId])
-
-
+import { AuthContext } from "../../contexts/AuthContext";
 
 const ProductDetails = () => {
   const { _id, product, productId } = useLoaderData();
+  const [bids, setBids] = useState([]);
   console.log(product);
   const { user } = use(AuthContext);
   console.log(user);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/product/bids/${productId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("bids of this product", data);
+        setBids(data);
+      });
+  }, [productId]);
+
   const bidModalRef = useRef(null);
   const handleBidModalOpen = () => {
     bidModalRef.current.showModal();
@@ -31,6 +34,7 @@ const ProductDetails = () => {
       product: productId,
       buyer_name: name,
       buyer_email: email,
+      buyer_image: user?.photoURL,
       bid_price: bid,
       status: "pending",
     };
@@ -44,15 +48,15 @@ const ProductDetails = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log("after placing bid", data);
-        if(data.insertedId){
-            bidModalRef.current.close();
-            Swal.fire({
-  position: "top-end",
-  icon: "success",
-  title: "Your bid has been placed",
-  showConfirmButton: false,
-  timer: 1500
-});
+        if (data.insertedId) {
+          bidModalRef.current.close();
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Your bid has been placed",
+            showConfirmButton: false,
+            timer: 1500,
+          });
         }
       });
   };
@@ -117,7 +121,70 @@ const ProductDetails = () => {
       </div>
       {/* {bids for this product} */}
       <div>
-
+        <h3 className="text-3xl">
+          {" "}
+          Bids for this product:{" "}
+          <span className="text-primary">{bids.length}</span>{" "}
+        </h3>
+        <div className="overflow-x-auto">
+          <table className="table">
+            {/* head */}
+            <thead>
+              <tr>
+                <th>
+                  SL No.
+                </th>
+                <th>Buyer Name</th>
+                <th>Buyer Email</th>
+                <th>Bid Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* row 1 */}
+             {
+               bids.map((bid,index) => 
+                 <tr>
+                <th>
+                {index}
+                </th>
+                <td>
+                  <div className="flex items-center gap-3">
+                    <div className="avatar">
+                      <div className="mask mask-squircle h-12 w-12">
+                        <img
+                          src="https://img.daisyui.com/images/profile/demo/2@94.webp"
+                          alt="Avatar Tailwind CSS Component"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-bold">Hart Hagerty</div>
+                      <div className="text-sm opacity-50">United States</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  Zemlak, Daniel and Leannon
+                  <br />
+                  <span className="badge badge-ghost badge-sm">
+                    Desktop Support Technician
+                  </span>
+                </td>
+                <td>Purple</td>
+                <th>
+                  <button className="btn btn-ghost btn-xs">details</button>
+                </th>
+              </tr>
+               ) 
+             }
+            
+              
+            </tbody>
+            {/* foot */}
+           
+          </table>
+        </div>
       </div>
     </div>
   );
