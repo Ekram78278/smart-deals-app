@@ -4,16 +4,17 @@ import Swal from "sweetalert2";
 import { AuthContext } from "../../contexts/AuthContext";
 
 const ProductDetails = () => {
-  const { _id, product, productId } = useLoaderData();
+  const { _id:productId } = useLoaderData();
   const [bids, setBids] = useState([]);
-  console.log(product);
+  
+  
   const { user } = use(AuthContext);
   console.log(user);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/product/bids/${productId}`)
+    fetch(`http://localhost:3000/products/bids/${productId}`)
       .then((res) => res.json())
-      .then((data) => {
+      .then((data) => { 
         console.log("bids of this product", data);
         setBids(data);
       });
@@ -29,7 +30,7 @@ const ProductDetails = () => {
     const name = e.target.name.value;
     const email = e.target.email.value;
     const bid = e.target.bid.value;
-    console.log(productId, name, email, bid);
+    console.log(productId,name, email, bid);
     const newBid = {
       product: productId,
       buyer_name: name,
@@ -57,9 +58,15 @@ const ProductDetails = () => {
             showConfirmButton: false,
             timer: 1500,
           });
+        // add new bid to the state
+        newBid._id = data.insertedId;
+        const newBids = [...bids, newBid];
+        newBids.sort((a,b) =>b.bid_price-a.bid_price)
+        setBids(newBids);  
         }
       });
   };
+ 
 
   return (
     <div>
@@ -146,32 +153,29 @@ const ProductDetails = () => {
                bids.map((bid,index) => 
                  <tr>
                 <th>
-                {index}
+                {index+1}
                 </th>
                 <td>
                   <div className="flex items-center gap-3">
                     <div className="avatar">
                       <div className="mask mask-squircle h-12 w-12">
                         <img
-                          src="https://img.daisyui.com/images/profile/demo/2@94.webp"
+                          src={bid.buyer_image}
                           alt="Avatar Tailwind CSS Component"
                         />
                       </div>
                     </div>
                     <div>
-                      <div className="font-bold">Hart Hagerty</div>
+                      <div className="font-bold">{bid.buyer_name}</div>
                       <div className="text-sm opacity-50">United States</div>
                     </div>
                   </div>
                 </td>
                 <td>
-                  Zemlak, Daniel and Leannon
-                  <br />
-                  <span className="badge badge-ghost badge-sm">
-                    Desktop Support Technician
-                  </span>
+                  {bid.buyer_email}
+                 
                 </td>
-                <td>Purple</td>
+                <td>{bid.bid_price}</td>
                 <th>
                   <button className="btn btn-ghost btn-xs">details</button>
                 </th>
