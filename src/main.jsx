@@ -44,7 +44,7 @@ const router = createBrowserRouter([
         loader:({params}) => fetch(`http://localhost:3000/products/${params.id}`)
         .then(res => res.json()
         ),
-        element:<ProductDetails></ProductDetails>
+        element:<PrivateRoute><ProductDetails></ProductDetails></PrivateRoute>
       }
     ],
   },

@@ -12,13 +12,32 @@ const ProductDetails = () => {
   console.log(user);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/products/bids/${productId}`)
-      .then((res) => res.json())
-      .then((data) => { 
-        console.log("bids of this product", data);
-        setBids(data);
-      });
-  }, [productId]);
+    if (!user) return;
+
+    // Get Firebase ID token
+    user.getIdToken().then((token) => {
+      fetch(`http://localhost:3000/products/bids/${productId}`, {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("bids of this product", data);
+          // Check if data is an array before setting it
+          if (Array.isArray(data)) {
+            setBids(data);
+          } else {
+            console.error("Failed to fetch bids:", data);
+            setBids([]);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching bids:", error);
+          setBids([]);
+        });
+    });
+  }, [productId, user]);
 
   const bidModalRef = useRef(null);
   const handleBidModalOpen = () => {
